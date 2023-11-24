@@ -32,6 +32,20 @@
 - StatInstalled方法：从元数据查看本地游戏文件的安装状态
 - StatLatest方法：从元数据查看本地游戏文件的最新状态，当PreVer设置为true时搜索预下载版本，如果预下载不可用则返回false
 - StatPreDownload方法：检测当前是否支持预下载
-- Install方法：提供FileList安装文件列表（通过之前获取的Url下载），Path安装位置，ServerId安装文件服务器来源，LanguangeId安装文件语言
+- Install方法：安装游戏文件，需要提供FileList安装文件列表（通过之前获取的Url下载），Path安装位置，ServerId安装文件服务器来源，LanguangeId安装文件语言
+- PreInstall方法：同上，但使用预下载文件（预下载方式获取的文件只能通过预下载API安装或更新，不能与普通模式混用，API同理）
+- Update方法：更新游戏，需要提供更新文件列表（通过之前获取的Url下载）
+- PreUpdate方法：同上，但使用预下载文件（预下载方式获取的文件只能通过预下载API安装或更新，不能与普通模式混用，API同理）
+- Uninstall方法：卸载当前安装文件（如果有）
+- Launch方法：启动当前安装位置的游戏
 
-## 尚未完成
+## 例程
+
+见项目：Example
+
+## 鸣谢
+
+- [7-zip](https://7-zip.org/) - It is used as a decompression module.
+- [bit7z](https://github.com/rikyoz/bit7z) - Provides an API for manipulating 7z.dll.
+- [HDiffPatch](https://github.com/sisong/HDiffPatch) - Provide updated game features.
+- [AFComponents](https://github.com/acgnfun/AFComponents) - Provides a simple API for creating shortcuts.
