@@ -11,7 +11,7 @@ extern "C" {
 
 	/**
 	* @brief download file from internet with no progress.
-	* @author acgnFan
+	* @author acgnfun
 	* @date 2023/11/21
 	* @return none
 	*/
@@ -19,7 +19,7 @@ extern "C" {
 
 	/**
 	* @brief download file from internet with no progress (wide).
-	* @author acgnFan
+	* @author acgnfun
 	* @date 2023/11/21
 	* @return none
 	*/

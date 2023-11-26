@@ -14,7 +14,7 @@
 #include <vcruntime.h>
 #include <objbase.h>
 
-#if _HAS_CXX20
+#if _HAS_CXX17
 
 #include <string>
 #include <vector>
@@ -33,6 +33,7 @@ namespace GIAPI
 
 	enum Server
 	{
+		UNKNOWN,
 		CNREL_OFFICIAL,
 		CNREL_BILIBILI,
 		OSREL_GLOBAL
@@ -96,7 +97,9 @@ namespace GIAPI
 	};
 }
 
-#endif // _HAS_CXX20
+#else
+#error The minimum version of the GenshinImpactAPI is C++17.
+#endif // _HAS_CXX17
 
 #endif // __cplusplus
 

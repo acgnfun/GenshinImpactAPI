@@ -13,7 +13,7 @@ extern "C" {
 	* @brief get the path to the current exe file.
 	* @param Buffer memory area.
 	* @param BufSize memory size(elem number).
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return minimum buffer size(elem number) (if it is greater than bufsize, it means failure)
 	*/
@@ -23,7 +23,7 @@ extern "C" {
 	* @brief get the path to the current exe file.
 	* @param Buffer memory area.
 	* @param BufSize memory size(elem number).
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return minimum buffer size(elem number) (if it is greater than bufsize, it means failure)
 	*/
@@ -33,7 +33,7 @@ extern "C" {
 	* @briefget the path to the directory where the current exe file is located.
 	* @param Buffer memory area.
 	* @param BufSize memory size(elem number).
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return minimum buffer size(elem number) (if it is greater than bufsize, it means failure)
 	*/
@@ -43,7 +43,7 @@ extern "C" {
 	* @brief get the path to the directory where the current exe file is located.
 	* @param Buffer memory area.
 	* @param BufSize memory size(elem number).
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return minimum buffer size(elem number) (if it is greater than bufsize, it means failure)
 	*/

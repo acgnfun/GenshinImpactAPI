@@ -19,7 +19,7 @@ extern "C" {
 	* @brief check whether the pipe is available(opened).
 	* @param PipeName name
 	* @param Millisec timeout(millisecond)
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return int(bool)
 	*/
@@ -29,7 +29,7 @@ extern "C" {
 	* @brief check whether the pipe is available(opened).
 	* @param PipeName name
 	* @param Millisec timeout(millisecond)
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return int(bool)
 	*/
@@ -39,7 +39,7 @@ extern "C" {
 	* @brief create a pipe(server) (if it doesn't exist).
 	* @param PipeName name
 	* @param PipeMode access mode, such as 'AFC_PIPE_ACCCESS_XX'
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return AFC_PIPE handle
 	*/
@@ -49,7 +49,7 @@ extern "C" {
 	* @brief create a pipe(server) (if it doesn't exist).
 	* @param PipeName name
 	* @param PipeMode access mode, such as 'AFC_PIPE_ACCCESS_XX'
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return AFC_PIPE handle
 	*/
@@ -57,7 +57,7 @@ extern "C" {
 
 	/**
 	* @brief open a created pipe(server)(not opened).
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return int(bool)
 	*/
@@ -65,7 +65,7 @@ extern "C" {
 
 	/**
 	* @brief close an opened pipe(server).
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return none
 	*/
@@ -75,7 +75,7 @@ extern "C" {
 	* @brief connect to an opened pipe.
 	* @param PipeName name
 	* @param PipeMode access mode, such as 'AFC_PIPE_ACCCESS_XX'
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return AFC_PIPE handle
 	*/
@@ -85,7 +85,7 @@ extern "C" {
 	* @brief connect to an opened pipe.
 	* @param PipeName name
 	* @param PipeMode access mode, such as 'AFC_PIPE_ACCCESS_XX'
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return AFC_PIPE handle
 	*/
@@ -94,7 +94,7 @@ extern "C" {
 	/**
 	* @brief destroy pipe handle which is created by 'AFC_CreatePipeX' or 'AFC_ConnectPipeX'.
 	* @param PipeHandle handle
-	* @author acgnFun
+	* @author acgnfun
 	* @date 2023/11/22
 	* @return none
 	*/

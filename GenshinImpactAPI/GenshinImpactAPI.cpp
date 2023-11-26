@@ -112,7 +112,7 @@ GIAPI::ErrorCode GIAPI::Manager::GetLocalGameServer(Server& ReturnServerId) cons
 
 GIAPI::ErrorCode GIAPI::Manager::GetInstallPackageUrl(int Language, strlist& ReturnList) const
 {
-	if (!ResourceIndex) return ResourceIndexNotLoaded;
+	if (!ResourceIndexStat) return ResourceIndexNotLoaded;
 	ReturnList.clear();
 	try
 	{
@@ -135,7 +135,7 @@ GIAPI::ErrorCode GIAPI::Manager::GetInstallPackageUrl(int Language, strlist& Ret
 
 GIAPI::ErrorCode GIAPI::Manager::GetPreInstallPackageUrl(int Language, strlist& ReturnList) const
 {
-	if (!ResourceIndex) return ResourceIndexNotLoaded;
+	if (!ResourceIndexStat) return ResourceIndexNotLoaded;
 	if (!StatPreDownload()) return PredownloadNotSupported;
 	ReturnList.clear();
 	try
