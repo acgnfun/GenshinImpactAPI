@@ -163,7 +163,6 @@
     <CopyFileToFolders Include="7z.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <None Include="..\README.md" />
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
