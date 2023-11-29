@@ -307,7 +307,7 @@ bool GIAPI::Manager::StatLatest(bool PreVer) const
 bool GIAPI::Manager::StatPreDownload() const
 {
 	if (!LocalMetadataStat || !ResourceIndexStat) return false;
-	try { if (ResourceIndex["data"].contains("pre_download_game")) return true; }
+	try { if (ResourceIndex["data"]["pre_download_game"] != nullptr) return true; }
 	catch (...) {}
 	return false;
 }

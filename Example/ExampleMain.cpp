@@ -9,6 +9,7 @@ static std::string MetadataPath;
 static std::string InstallPath;
 static std::string DownloadPath;
 static std::vector<std::string> Packs;
+static bool TagPreVer = false;
 static bool TagDownoadResource = false;
 static bool TagRILoad = false;
 static bool TagMTLoad = false;
@@ -43,6 +44,7 @@ static afc::rule rulist[] = {
 	{ "cnrel2",    0, 18 },
 	{ "osrel",     0, 19 },
 	{ "download-resource", 1, 20},
+	{ "prever",    0, 21},
 	{ nullptr,     0, 0 }
 };
 
@@ -64,6 +66,7 @@ static void help()
 		<< "            -ja_JP            with voice pack(Japanese).\n"
 		<< "            -ko_KR            with voice pack(Korean).\n"
 		<< "        -upinfo               print update packages' url list.\n"
+		<< "        -prever               switch to pre-download information.\n"
 		<< "    -install <path>           install packages to path.\n"
 		<< "        -pack <path>          load install package.\n"
 		<< "        -zh_CN                install with voice pack(Chinese).\n"
@@ -164,6 +167,10 @@ int main(int argc, char* argv[])
 			hopt.getopt(DownloadPath);
 			if (!DownloadPath.empty()) TagDownoadResource = true;
 			break;
+		case 21:
+			if (TagPrint || TagInstall || TagUpdate)
+				TagPreVer = true;
+			break;
 		case AFC_OPT_ERROR:
 			if (printerror()) // check input commandline options' error.
 				return 1;
@@ -248,16 +255,28 @@ bool run() // proc function.
 			Man.LoadResourceIndex(ResourcePath);
 		if (TagMTLoad)
 			Man.LoadLocalMetadata(MetadataPath);
+		bool Pre = Man.StatPreDownload();
+		if (TagPreVer && !Pre)
+		{
+			std::cerr << "pre-downloads are not currently supported." << std::endl;
+			return false;
+		}
 		if (TagPrintdlinfo)
 		{
-			Man.GetInstallPackageUrl(LanguageId, list);
+			if (TagPreVer)
+				Man.GetPreInstallPackageUrl(LanguageId, list);
+			else
+				Man.GetInstallPackageUrl(LanguageId, list);
 			std::cout << "install packages:" << std::endl;
 			for (auto i : list)
 				std::cout << i << std::endl;
 		}
 		if (TagPrintupinfo)
 		{
-			Man.GetUpdatePackageUrl(list);
+			if (TagPreVer)
+				Man.GetPreUpdatePackageUrl(list);
+			else
+				Man.GetUpdatePackageUrl(list);
 			std::cout << "update packages:" << std::endl;
 			for (auto i : list)
 				std::cout << i << std::endl;
@@ -265,12 +284,18 @@ bool run() // proc function.
 		if (TagInstall)
 		{
 			CoInitialize(nullptr);
-			Man.Install(Packs, InstallPath, ServerId, LanguageId);
+			if (TagPreVer)
+				Man.Install(Packs, InstallPath, ServerId, LanguageId);
+			else
+				Man.PreInstall(Packs, InstallPath, ServerId, LanguageId);
 			CoUninitialize();
 		}
 		else if (TagUpdate)
 		{
-			Man.Update(Packs);
+			if (TagPreVer)
+				Man.PreUpdate(Packs);
+			else
+				Man.Update(Packs);
 		}
 		else if (TagUninstall)
 		{
