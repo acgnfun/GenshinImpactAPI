@@ -3,6 +3,10 @@
 #ifndef GENSHINIMPACTAPI_H
 #define GENSHINIMPACTAPI_H
 
+#ifndef NDEBUG
+#error The API does not work properly in Debug mode, so compilation in Debug mode is disabled.
+#endif // !NDEBUG
+
 #ifdef GIAPI_BUILD
 #define GIAPI_EXPORT	__declspec(dllexport)
 #else
@@ -19,7 +23,6 @@
 #include <string>
 #include <vector>
 #include <filesystem>
-
 #include <json.hpp>
 
 namespace GIAPI
