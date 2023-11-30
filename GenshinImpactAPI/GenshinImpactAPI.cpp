@@ -28,7 +28,10 @@ GIAPI::Manager::Manager()
 
 GIAPI::Manager::~Manager()
 {
-	FlushMetadata();
+	// FlushMetadata();
+	// 这里不能使用FlushMetadata方法，因为在此析构函数执行前，FlushMetadata所需要的LocalMetadata对象已经被析构
+	// LocalMetadata对象实际是一个空对象，FlushMetadata会将此空对象写入硬盘，导致Metadata文件内容被错误删除
+	// 应该在每一个对LocalMetadata对象的更改行为之后使用FlushMetadata，而不是在析构函数中调用
 }
 
 GIAPI::ErrorCode GIAPI::Manager::ResourceIndexUrl(Server ServerId, string& ReturnUrl) const
@@ -54,6 +57,7 @@ GIAPI::ErrorCode GIAPI::Manager::ResourceIndexUrl(Server ServerId, string& Retur
 
 GIAPI::ErrorCode GIAPI::Manager::LoadResourceIndex(path ResourcePath)
 {
+	ResourcePath = std::filesystem::absolute(ResourcePath);
 	std::fstream file(ResourcePath, std::ios::in | std::ios::binary);
 	if (!file.is_open()) return UnknownError;
 	ResourceIndexStat = false;
@@ -71,6 +75,7 @@ GIAPI::ErrorCode GIAPI::Manager::LoadResourceIndex(path ResourcePath)
 
 GIAPI::ErrorCode GIAPI::Manager::LoadLocalMetadata(path MetadataPath)
 {
+	MetadataPath = std::filesystem::absolute(MetadataPath);
 	std::fstream file(MetadataPath, std::ios::in | std::ios::binary);
 	if (file.is_open())
 	{
@@ -89,6 +94,7 @@ GIAPI::ErrorCode GIAPI::Manager::LoadLocalMetadata(path MetadataPath)
 		}
 		this->MetadataPath = MetadataPath;
 		LocalMetadataStat = true;
+		//FlushMetadata();加载Metadata时不需要Flush，以节省硬碟寿命
 		return Success;
 	}
 	if (std::filesystem::exists(MetadataPath)) return UnknownError;
@@ -579,7 +585,7 @@ void GIAPI::Manager::FlushMetadata() const
 	if (!LocalMetadataStat) return;
 	std::fstream file(MetadataPath, std::ios::out | std::ios::binary | std::ios::trunc);
 	if (!file.is_open()) return;
-	try { file << LocalMetadata; }
+	try { file << LocalMetadata; /*printf("%s\n", "Save OK!");*/ }
 	catch (...) {}
 	file.close();
 	return;

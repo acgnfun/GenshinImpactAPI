@@ -51,7 +51,7 @@ static afc::rule rulist[] = {
 static void help()
 {
 	std::cout
-		<< "GenshinImpactAPI_Example v0.1.0 (C) 2023 acgnfun\n"
+		<< "GIAPIManager v0.1.0 (C) 2023 acgnfun\n"
 		<< "    -help                     show this help.\n"
 		<< "    -download <url> <path>    download url to path.\n"
 		<< "    -download-resource <path> download resource to path.\n"
@@ -75,8 +75,10 @@ static void help()
 		<< "        -ko_KR                install with voice pack(Korean).\n"
 		<< "        -cnrel/-cnrel2/-osrel specify the source of the installation file server.\n"
 		<< "            cnrel:official server, cnrel2:bilibili server, osrel: global server.\n"
+		<< "        -prever               install the package obtained from the pre-download mode.\n"
 		<< "    -update                   update local game.\n"
 		<< "        -pack <path>          load update package.\n"
+		<< "        -prever               update the package obtained from the pre-download mode.\n"
 		<< "    -uninstall                uninstall game.\n"
 		<< "    -launch                   launch game." << std::endl;
 }
@@ -168,7 +170,6 @@ int main(int argc, char* argv[])
 			if (!DownloadPath.empty()) TagDownoadResource = true;
 			break;
 		case 21:
-			if (TagPrint || TagInstall || TagUpdate)
 				TagPreVer = true;
 			break;
 		case AFC_OPT_ERROR:
@@ -202,6 +203,11 @@ bool printerror()
 			std::cerr << "metadata file not loaded." << std::endl;
 			error = true;
 		}
+	}
+	if (TagPreVer && !(TagPrint || TagInstall || TagUpdate))
+	{
+		std::cerr << "unknown option -prever." << std::endl;
+		error = true;
 	}
 	if (TagPrint && !(TagPrintdlinfo || TagPrintupinfo))
 	{
@@ -255,8 +261,7 @@ bool run() // proc function.
 			Man.LoadResourceIndex(ResourcePath);
 		if (TagMTLoad)
 			Man.LoadLocalMetadata(MetadataPath);
-		bool Pre = Man.StatPreDownload();
-		if (TagPreVer && !Pre)
+		if (TagPreVer && !Man.StatPreDownload())
 		{
 			std::cerr << "pre-downloads are not currently supported." << std::endl;
 			return false;
