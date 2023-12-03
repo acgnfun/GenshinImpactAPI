@@ -28,20 +28,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="..\lib_debug\AFComponents.dll">
-      <Filter>资源文件</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\lib_release\AFComponents.dll">
-      <Filter>资源文件</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\lib_debug\hpatchz.dll">
-      <Filter>资源文件</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="..\lib_release\hpatchz.dll">
-      <Filter>资源文件</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="7z.dll">
-      <Filter>资源文件</Filter>
-    </CopyFileToFolders>
+    <CopyFileToFolders Include="7z.dll" />
+    <CopyFileToFolders Include="..\lib_debug\AFComponents.dll" />
+    <CopyFileToFolders Include="..\lib_release\AFComponents.dll" />
+    <CopyFileToFolders Include="..\lib_debug\hpatchz.dll" />
+    <CopyFileToFolders Include="..\lib_release\hpatchz.dll" />
   </ItemGroup>
 </Project>

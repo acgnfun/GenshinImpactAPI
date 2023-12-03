@@ -14,8 +14,10 @@ extern "C" {
 	* @param Buffer memory area.
 	* @param BufSize memory size(elem number).
 	* @author acgnfun
-	* @date 2023/11/22
-	* @return minimum buffer size(elem number) (if it is greater than bufsize, it means failure)
+	* @date 2023/12/2
+	* @return minimum buffer size(elem number)
+	* @return if it is greater than bufsize, it means failure.
+	* @return If the value is -1, a fatal error has occurred and the function will never respond correctly.
 	*/
 	AF_EXPORT int AFC_ProgramFilePathA(char* Buffer, int BufSize);
 
@@ -24,8 +26,10 @@ extern "C" {
 	* @param Buffer memory area.
 	* @param BufSize memory size(elem number).
 	* @author acgnfun
-	* @date 2023/11/22
-	* @return minimum buffer size(elem number) (if it is greater than bufsize, it means failure)
+	* @date 2023/12/2
+	* @return minimum buffer size(elem number)
+	* @return if it is greater than bufsize, it means failure.
+	* @return If the value is -1, a fatal error has occurred and the function will never respond correctly.
 	*/
 	AF_EXPORT int AFC_ProgramFilePathW(wchar_t* Buffer, int BufSize);
 
@@ -34,8 +38,10 @@ extern "C" {
 	* @param Buffer memory area.
 	* @param BufSize memory size(elem number).
 	* @author acgnfun
-	* @date 2023/11/22
-	* @return minimum buffer size(elem number) (if it is greater than bufsize, it means failure)
+	* @date 2023/12/2
+	* @return minimum buffer size(elem number)
+	* @return if it is greater than bufsize, it means failure.
+	* @return If the value is -1, a fatal error has occurred and the function will never respond correctly.
 	*/
 	AF_EXPORT int AFC_ProgramFolderPathA(char* Buffer, int BufSize);
 
@@ -44,10 +50,36 @@ extern "C" {
 	* @param Buffer memory area.
 	* @param BufSize memory size(elem number).
 	* @author acgnfun
-	* @date 2023/11/22
-	* @return minimum buffer size(elem number) (if it is greater than bufsize, it means failure)
+	* @date 2023/12/2
+	* @return minimum buffer size(elem number)
+	* @return if it is greater than bufsize, it means failure.
+	* @return If the value is -1, a fatal error has occurred and the function will never respond correctly.
 	*/
 	AF_EXPORT int AFC_ProgramFolderPathW(wchar_t* Buffer, int BufSize);
+
+	/**
+	* @brief Get the temporary file path.
+	* @param Buffer memory area.
+	* @param BufSize memory size(elem number).
+	* @author acgnfun
+	* @date 2023/12/2
+	* @return minimum buffer size(elem number)
+	* @return if it is greater than bufsize, it means failure.
+	* @return If the value is -1, a fatal error has occurred and the function will never respond correctly.
+	*/
+	AF_EXPORT int AFC_TempPathA(char* Buffer, int BufSize);
+
+	/**
+	* @brief Get the temporary file path.
+	* @param Buffer memory area.
+	* @param BufSize memory size(elem number).
+	* @author acgnfun
+	* @date 2023/12/2
+	* @return minimum buffer size(elem number)
+	* @return if it is greater than bufsize, it means failure.
+	* @return If the value is -1, a fatal error has occurred and the function will never respond correctly.
+	*/
+	AF_EXPORT int AFC_TempPathW(wchar_t* Buffer, int BufSize);
 
 #ifdef __cplusplus
 }
