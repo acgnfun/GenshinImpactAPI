@@ -27,6 +27,5 @@
   <ItemGroup>
     <CopyFileToFolders Include="..\lib_debug\AFComponents.dll" />
     <CopyFileToFolders Include="..\lib_release\AFComponents.dll" />
-    <CopyFileToFolders Include="..\plugin\aria2c\aria2c.exe" />
   </ItemGroup>
 </Project>
