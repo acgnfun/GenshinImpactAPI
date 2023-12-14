@@ -1,7 +1,7 @@
 #include "../GenshinImpactAPI/GenshinImpactAPI.h"
 #include <iostream>
 #include <afc/OptProc.h>
-#include <afc/BaseDownload.h>
+#include <afc/Download.h>
 
 static std::vector<std::pair<std::string, std::string>> DownloadPairs;
 static std::string ResourcePath;
@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
 			if (!DownloadPath.empty()) TagDownoadResource = true;
 			break;
 		case 21:
-				TagPreVer = true;
+			TagPreVer = true;
 			break;
 		case AFC_OPT_ERROR:
 			if (printerror()) // check input commandline options' error.
@@ -250,13 +250,11 @@ bool run() // proc function.
 		{
 			std::string DownloadUrl;
 			Man.ResourceIndexUrl(ServerId, DownloadUrl);
-			AFC_DownloadA(DownloadUrl.c_str(), DownloadPath.c_str());
+			afc::download(DownloadUrl, DownloadPath);
 		}
-		for (auto i : DownloadPairs)
-		{
-			AFC_DownloadA(i.first.c_str(), i.second.c_str());
-		}
-		std::vector<std::string> list;
+		for (auto pair : DownloadPairs)
+			afc::download(pair.first, pair.second);
+		GIAPI::urllist list;
 		if (TagRILoad)
 			Man.LoadResourceIndex(ResourcePath);
 		if (TagMTLoad)
@@ -274,7 +272,10 @@ bool run() // proc function.
 				Man.GetInstallPackageUrl(LanguageId, list);
 			std::cout << "install packages:" << std::endl;
 			for (auto i : list)
-				std::cout << i << std::endl;
+			{
+				std::cout << i.url << std::endl;
+				std::cout << i.md5 << std::endl;
+			}
 		}
 		if (TagPrintupinfo)
 		{
@@ -284,7 +285,10 @@ bool run() // proc function.
 				Man.GetUpdatePackageUrl(list);
 			std::cout << "update packages:" << std::endl;
 			for (auto i : list)
-				std::cout << i << std::endl;
+			{
+				std::cout << i.url << std::endl;
+				std::cout << i.md5 << std::endl;
+			}
 		}
 		if (TagInstall)
 		{

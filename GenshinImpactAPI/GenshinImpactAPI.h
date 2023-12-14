@@ -33,6 +33,17 @@ namespace GIAPI
 	using wstrlist = std::vector<std::string>;
 	using path = std::filesystem::path;
 	using json = nlohmann::json;
+	template<class ty>
+	struct base_urlobj
+	{
+		ty url;
+		ty filename;
+		ty md5;
+	};
+	using urlobj = base_urlobj<std::string>;
+	using wurlobj = base_urlobj<std::wstring>;
+	using urllist = std::vector<urlobj>;
+	using wurllist = std::vector<wurlobj>;
 
 	enum Server
 	{
@@ -77,10 +88,10 @@ namespace GIAPI
 		ErrorCode LoadResourceIndex(path ResourcePath);
 		ErrorCode LoadLocalMetadata(path MetadataPath);
 		ErrorCode GetLocalGameServer(Server& ReturnServerId) const;
-		ErrorCode GetInstallPackageUrl(int Language, strlist& ReturnList) const;
-		ErrorCode GetPreInstallPackageUrl(int Language, strlist& ReturnList) const;
-		ErrorCode GetUpdatePackageUrl(strlist& ReturnList) const;
-		ErrorCode GetPreUpdatePackageUrl(strlist& ReturnList) const;
+		ErrorCode GetInstallPackageUrl(int Language, urllist& ReturnList) const;
+		ErrorCode GetPreInstallPackageUrl(int Language, urllist& ReturnList) const;
+		ErrorCode GetUpdatePackageUrl(urllist& ReturnList) const;
+		ErrorCode GetPreUpdatePackageUrl(urllist& ReturnList) const;
 		bool StatInstalled() const;
 		bool StatLatest(bool PreVer = false) const;
 		bool StatPreDownload() const;
