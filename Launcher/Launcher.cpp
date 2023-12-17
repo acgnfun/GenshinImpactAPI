@@ -14,6 +14,7 @@
 HINSTANCE hInst;                                // 当前实例
 WCHAR szTitle[MAX_LOADSTRING];                  // 标题栏文本
 WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
+HWND hWnd;
 
 bool ThreadRunning = false;
 std::wstring InstallPath;
@@ -30,6 +31,8 @@ void InstallGame();
 void UpdateGame();
 void PreUpdateGame();
 void UninstallGame();
+void RefreshButton();
+void RefreshButtonDisplay();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -133,6 +136,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 
+	::hWnd = hWnd;
+
 	return TRUE;
 }
 
@@ -216,23 +221,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			PreDownloadTag = true;
 		else
 			PreDownloadTag = false;
-		int nBtnId = 0;
-		if (!Manager.StatInstalled())
-		{
-			tBtn = Btn_Install;
-			nBtnId = IDB_INSTALL;
-		}
-		else if (!Manager.StatLatest())
-		{
-			tBtn = Btn_Update;
-			nBtnId = IDB_UPDATE;
-		}
-		else
-		{
-			tBtn = Btn_Launch;
-			nBtnId = IDB_LAUNCH;
-		}
-		hr = DXACreateBitmap(WICFactory, Context, hInst, MAKEINTRESOURCEW(nBtnId), L"PNG", &pBtnMain);
+		RefreshButton();
 		hr = DXACreateBitmap(WICFactory, Context, (afc::program_dir_path() / L"Assets" / L"Background.png").wstring().c_str(), &pBitmapBuffer);
 		const char* durl = nullptr;
 		switch (sId)
@@ -603,6 +592,7 @@ void InstallGame()
 	ThreadRunning = true;
 	if (!Manager.StatInstalled())
 	{
+		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 		GIAPI::urllist list;
 		GIAPI::strlist flist;
 		Manager.GetInstallPackageUrl(gLang, list);
@@ -622,8 +612,11 @@ void InstallGame()
 			}
 		}
 		CoInitialize(nullptr);
-		Manager.Install(flist, "D:\\Program Files\\Genshin Impact Game 2", sId, gLang);
+		Manager.Install(flist, afc::convert_string(InstallPath), sId, gLang);
 		CoUninitialize();
+		SetThreadExecutionState(ES_CONTINUOUS);
+		RefreshButtonDisplay();
+		MessageBeep(MB_OK);
 	}
 	ThreadRunning = false;
 }
@@ -633,6 +626,7 @@ void UpdateGame()
 	ThreadRunning = true;
 	if (!Manager.StatLatest())
 	{
+		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 		GIAPI::urllist list;
 		GIAPI::strlist flist;
 		Manager.GetUpdatePackageUrl(list);
@@ -652,6 +646,9 @@ void UpdateGame()
 			}
 		}
 		Manager.Update(flist);
+		SetThreadExecutionState(ES_CONTINUOUS);
+		RefreshButtonDisplay();
+		MessageBeep(MB_OK);
 	}
 	ThreadRunning = false;
 }
@@ -661,6 +658,7 @@ void PreUpdateGame()
 	ThreadRunning = true;
 	if (Manager.StatPreDownload() && !Manager.StatLatest(true))
 	{
+		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 		GIAPI::urllist list;
 		GIAPI::strlist flist;
 		Manager.GetPreUpdatePackageUrl(list);
@@ -680,6 +678,9 @@ void PreUpdateGame()
 			}
 		}
 		Manager.PreUpdate(flist);
+		SetThreadExecutionState(ES_CONTINUOUS);
+		RefreshButtonDisplay();
+		MessageBeep(MB_OK);
 	}
 	ThreadRunning = false;
 }
@@ -688,6 +689,41 @@ void UninstallGame()
 {
 	ThreadRunning = true;
 	if (Manager.StatInstalled())
+	{
+		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 		Manager.Uninstall();
+		SetThreadExecutionState(ES_CONTINUOUS);
+		RefreshButtonDisplay();
+		MessageBeep(MB_OK);
+	}
 	ThreadRunning = false;
+}
+
+void RefreshButton()
+{
+	int nBtnId = 0;
+	if (!Manager.StatInstalled())
+	{
+		tBtn = Btn_Install;
+		nBtnId = IDB_INSTALL;
+	}
+	else if (!Manager.StatLatest())
+	{
+		tBtn = Btn_Update;
+		nBtnId = IDB_UPDATE;
+	}
+	else
+	{
+		tBtn = Btn_Launch;
+		nBtnId = IDB_LAUNCH;
+	}
+	if (pBtnMain) pBtnMain->Release();
+	DXACreateBitmap(WICFactory, Context, hInst, MAKEINTRESOURCEW(nBtnId), L"PNG", &pBtnMain);
+}
+
+void RefreshButtonDisplay()
+{
+	RefreshButton();
+	InvalidateRect(hWnd, nullptr, false);
+	UpdateWindow(hWnd);
 }
