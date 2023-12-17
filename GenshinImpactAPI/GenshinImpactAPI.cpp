@@ -118,7 +118,25 @@ GIAPI::ErrorCode GIAPI::Manager::LoadLocalMetadata(path MetadataPath)
 
 GIAPI::ErrorCode GIAPI::Manager::GetLocalGameServer(Server& ReturnServerId) const
 {
-	return UnknownError;
+	if (!LocalMetadataStat) return LocalMetadataNotLoaded;
+	if (!StatInstalled()) return NotInstalled;
+	try
+	{
+		string serverId = LocalMetadata["game"]["server"];
+		if (serverId == ("cnrel_0"))
+			ReturnServerId = CNREL_OFFICIAL;
+		else if (serverId == "cnrel_1")
+			ReturnServerId = CNREL_BILIBILI;
+		else if (serverId == "osrel")
+			ReturnServerId = OSREL_GLOBAL;
+		else
+		{
+			ReturnServerId = UNKNOWN;
+			throw "unknown server type string.";
+		}
+	}
+	catch (...) { return UnknownError; }
+	return Success;
 }
 
 GIAPI::ErrorCode GIAPI::Manager::GetInstallPackageUrl(int Language, urllist& ReturnList) const
@@ -440,7 +458,7 @@ bool GIAPI::Manager::StatLatest(bool PreVer) const
 
 bool GIAPI::Manager::StatPreDownload() const
 {
-	if (!LocalMetadataStat || !ResourceIndexStat) return false;
+	if (!ResourceIndexStat) return false;
 	try { if (ResourceIndex["data"]["pre_download_game"] != nullptr) return true; }
 	catch (...) {}
 	return false;

@@ -149,16 +149,21 @@ DXAWICFactory WICFactory;
 
 ID2D1Bitmap* pBackground = nullptr;
 ID2D1Bitmap* pBtnMain = nullptr;
+ID2D1Bitmap* pBtnPreDownload = nullptr;
 
 ID2D1Bitmap* pBitmapBuffer = nullptr;
 
 RECT WndRect;
 D2D1_RECT_F MainRect;
-D2D1_RECT_F BtnRect;
+D2D1_RECT_F BtnMainRect;
+D2D1_RECT_F BtnPDRect;
+
+D2D1_RECT_F BtnPDTureRect;
 
 GIAPI::Manager Manager;
 GIAPI::Language gLang;
 GIAPI::Server sId;
+bool PreDownloadTag = false;
 
 //
 //  函数: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -192,11 +197,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		Context.Initialize(&Device, hWnd);
 		WICFactory.Initialize();
 		hr = DXACreateBitmap(WICFactory, Context, hInst, MAKEINTRESOURCEW(IDB_BACKGROUND), L"PNG", &pBackground);
+		hr = DXACreateBitmap(WICFactory, Context, hInst, MAKEINTRESOURCEW(IDB_PREUPDATE), L"PNG", &pBtnPreDownload);
 		Manager.LoadLocalMetadata(afc::program_dir_path() / "Config" / "Metadata.json");
+		if (Manager.GetLocalGameServer(sId) != GIAPI::Success)
+			sId = GIAPI::CNREL_OFFICIAL;
 		if (Manager.LoadResourceIndex(afc::program_dir_path() / "Config" / "Resource.json") != GIAPI::Success)
 		{
 			std::string ResourceUrl;
-			sId = GIAPI::CNREL_OFFICIAL;
 			Manager.ResourceIndexUrl(sId, ResourceUrl);
 			afc::download(ResourceUrl, (afc::program_dir_path() / "Config" / "Resource.json").string());
 			if (Manager.LoadResourceIndex(afc::program_dir_path() / "Config" / "Resource.json") != GIAPI::Success)
@@ -205,6 +212,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 		}
+		if (Manager.StatPreDownload())
+			PreDownloadTag = true;
+		else
+			PreDownloadTag = false;
 		int nBtnId = 0;
 		if (!Manager.StatInstalled())
 		{
@@ -223,7 +234,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		hr = DXACreateBitmap(WICFactory, Context, hInst, MAKEINTRESOURCEW(nBtnId), L"PNG", &pBtnMain);
 		hr = DXACreateBitmap(WICFactory, Context, (afc::program_dir_path() / L"Assets" / L"Background.png").wstring().c_str(), &pBitmapBuffer);
-		if (!SUCCEEDED(hr) && afc::download(URL_CONTENT_OFFICIAL, (afc::program_dir_path() / L"Config" / L"Content.json").string()))
+		const char* durl = nullptr;
+		switch (sId)
+		{
+		case GIAPI::CNREL_OFFICIAL:
+			durl = URL_CONTENT_OFFICIAL;
+			break;
+		case GIAPI::CNREL_BILIBILI:
+			durl = URL_CONTENT_BILIBILI;
+			break;
+		case GIAPI::OSREL_GLOBAL:
+			durl = URL_CONTENT_GLOBAL;
+			break;
+		}
+		if (!SUCCEEDED(hr) && afc::download(durl, (afc::program_dir_path() / L"Config" / L"Content.json").string()))
 		{
 			nlohmann::json content;
 			std::fstream file(afc::program_dir_path() / L"Config" / L"Content.json");
@@ -303,6 +327,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Manager.ResourceIndexUrl(sId, ResourceUrl);
 			if (afc::download(ResourceUrl, (afc::program_dir_path() / "Config" / "Resource.json").string()))
 				Manager.LoadResourceIndex(afc::program_dir_path() / "Config" / "Resource.json");
+			if (Manager.StatPreDownload())
+				PreDownloadTag = true;
+			else
+				PreDownloadTag = false;
 			if (afc::download(URL_CONTENT_OFFICIAL, (afc::program_dir_path() / L"Config" / L"Content.json").string()))
 			{
 				nlohmann::json content;
@@ -347,6 +375,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Manager.ResourceIndexUrl(sId, ResourceUrl);
 			if (afc::download(ResourceUrl, (afc::program_dir_path() / "Config" / "Resource.json").string()))
 				Manager.LoadResourceIndex(afc::program_dir_path() / "Config" / "Resource.json");
+			if (Manager.StatPreDownload())
+				PreDownloadTag = true;
+			else
+				PreDownloadTag = false;
 			if (afc::download(URL_CONTENT_BILIBILI, (afc::program_dir_path() / L"Config" / L"Content.json").string()))
 			{
 				nlohmann::json content;
@@ -391,6 +423,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Manager.ResourceIndexUrl(sId, ResourceUrl);
 			if (afc::download(ResourceUrl, (afc::program_dir_path() / "Config" / "Resource.json").string()))
 				Manager.LoadResourceIndex(afc::program_dir_path() / "Config" / "Resource.json");
+			if (Manager.StatPreDownload())
+				PreDownloadTag = true;
+			else
+				PreDownloadTag = false;
 			if (afc::download(URL_CONTENT_GLOBAL, (afc::program_dir_path() / L"Config" / L"Content.json").string()))
 			{
 				nlohmann::json content;
@@ -445,13 +481,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (pBtnMain)
 			Context.FillBitmap(
 				pBtnMain,
-				BtnRect
+				BtnMainRect
+			);
+		if (PreDownloadTag && pBtnPreDownload)
+			BtnPDTureRect = Context.PutBitmap(
+				pBtnPreDownload,
+				BtnPDRect
 			);
 		Context.EndDraw();
 	}
 	break;
 	case WM_LBUTTONDOWN:
-		if (PositionInRectangle(LOWORD(lParam), HIWORD(lParam), BtnRect))
+		if (PositionInRectangle(LOWORD(lParam), HIWORD(lParam), BtnMainRect))
 		{
 			switch (tBtn)
 			{
@@ -470,6 +511,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 		}
+		else if (PreDownloadTag && PositionInRectangle(LOWORD(lParam), HIWORD(lParam), BtnPDTureRect))
+		{
+			PostMessageW(hWnd, WM_COMMAND, IDM_PREUPDATE, 0);
+		}
 		break;
 	case WM_SIZE:
 		GetClientRect(hWnd, &WndRect);
@@ -477,10 +522,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		MainRect.top = WndRect.top;
 		MainRect.right = WndRect.right;
 		MainRect.bottom = WndRect.bottom;
-		BtnRect.left = WndRect.right * 0.8;
-		BtnRect.top = WndRect.bottom * 0.8;
-		BtnRect.right = WndRect.right * 0.95;
-		BtnRect.bottom = WndRect.bottom * 0.9;
+		BtnMainRect.left = WndRect.right * 0.8;
+		BtnMainRect.top = WndRect.bottom * 0.8;
+		BtnMainRect.right = WndRect.right * 0.95;
+		BtnMainRect.bottom = WndRect.bottom * 0.9;
+		BtnPDRect.left = WndRect.right * 0.7;
+		BtnPDRect.top = WndRect.bottom * 0.8;
+		BtnPDRect.right = WndRect.right * 0.8;
+		BtnPDRect.bottom = WndRect.bottom * 0.9;
 		break;
 	case WM_ERASEBKGND:
 		return FALSE;
@@ -552,83 +601,93 @@ bool PositionInRectangle(UINT x, UINT y, D2D1_RECT_F Rectangle)
 void InstallGame()
 {
 	ThreadRunning = true;
-	GIAPI::urllist list;
-	GIAPI::strlist flist;
-	Manager.GetInstallPackageUrl(gLang, list);
-	if (!std::filesystem::exists(afc::program_dir_path() / "Cache"))
-		std::filesystem::create_directory(afc::program_dir_path() / "Cache");
-	for (auto i : list)
+	if (!Manager.StatInstalled())
 	{
-		if (std::filesystem::exists(afc::program_dir_path() / "Cache" / i.filename))
+		GIAPI::urllist list;
+		GIAPI::strlist flist;
+		Manager.GetInstallPackageUrl(gLang, list);
+		if (!std::filesystem::exists(afc::program_dir_path() / "Cache"))
+			std::filesystem::create_directory(afc::program_dir_path() / "Cache");
+		for (auto i : list)
 		{
-			flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
-			continue;
+			if (std::filesystem::exists(afc::program_dir_path() / "Cache" / i.filename))
+			{
+				flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
+				continue;
+			}
+			if (afc::download(i.url, (afc::program_dir_path() / "Cache" / (i.filename + ".tmp")).string()))
+			{
+				std::filesystem::rename(afc::program_dir_path() / "Cache" / (i.filename + ".tmp"), afc::program_dir_path() / "Cache" / i.filename);
+				flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
+			}
 		}
-		if (afc::download(i.url, (afc::program_dir_path() / "Cache" / (i.filename + ".tmp")).string()))
-		{
-			std::filesystem::rename(afc::program_dir_path() / "Cache" / (i.filename + ".tmp"), afc::program_dir_path() / "Cache" / i.filename);
-			flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
-		}
+		CoInitialize(nullptr);
+		Manager.Install(flist, "D:\\Program Files\\Genshin Impact Game 2", sId, gLang);
+		CoUninitialize();
 	}
-	CoInitialize(nullptr);
-	Manager.Install(flist, "D:\\Program Files\\Genshin Impact Game 2", sId, gLang);
-	CoUninitialize();
 	ThreadRunning = false;
 }
 
 void UpdateGame()
 {
 	ThreadRunning = true;
-	GIAPI::urllist list;
-	GIAPI::strlist flist;
-	Manager.GetUpdatePackageUrl(list);
-	if (!std::filesystem::exists(afc::program_dir_path() / "Cache"))
-		std::filesystem::create_directory(afc::program_dir_path() / "Cache");
-	for (auto i : list)
+	if (!Manager.StatLatest())
 	{
-		if (std::filesystem::exists(afc::program_dir_path() / "Cache" / i.filename))
+		GIAPI::urllist list;
+		GIAPI::strlist flist;
+		Manager.GetUpdatePackageUrl(list);
+		if (!std::filesystem::exists(afc::program_dir_path() / "Cache"))
+			std::filesystem::create_directory(afc::program_dir_path() / "Cache");
+		for (auto i : list)
 		{
-			flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
-			continue;
+			if (std::filesystem::exists(afc::program_dir_path() / "Cache" / i.filename))
+			{
+				flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
+				continue;
+			}
+			if (afc::download(i.url, (afc::program_dir_path() / "Cache" / (i.filename + ".tmp")).string()))
+			{
+				std::filesystem::rename(afc::program_dir_path() / "Cache" / (i.filename + ".tmp"), afc::program_dir_path() / "Cache" / i.filename);
+				flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
+			}
 		}
-		if (afc::download(i.url, (afc::program_dir_path() / "Cache" / (i.filename + ".tmp")).string()))
-		{
-			std::filesystem::rename(afc::program_dir_path() / "Cache" / (i.filename + ".tmp"), afc::program_dir_path() / "Cache" / i.filename);
-			flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
-		}
+		Manager.Update(flist);
 	}
-	Manager.Update(flist);
 	ThreadRunning = false;
 }
 
 void PreUpdateGame()
 {
 	ThreadRunning = true;
-	GIAPI::urllist list;
-	GIAPI::strlist flist;
-	Manager.GetPreUpdatePackageUrl(list);
-	if (!std::filesystem::exists(afc::program_dir_path() / "Cache"))
-		std::filesystem::create_directory(afc::program_dir_path() / "Cache");
-	for (auto i : list)
+	if (Manager.StatPreDownload() && !Manager.StatLatest(true))
 	{
-		if (std::filesystem::exists(afc::program_dir_path() / "Cache" / i.filename))
+		GIAPI::urllist list;
+		GIAPI::strlist flist;
+		Manager.GetPreUpdatePackageUrl(list);
+		if (!std::filesystem::exists(afc::program_dir_path() / "Cache"))
+			std::filesystem::create_directory(afc::program_dir_path() / "Cache");
+		for (auto i : list)
 		{
-			flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
-			continue;
+			if (std::filesystem::exists(afc::program_dir_path() / "Cache" / i.filename))
+			{
+				flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
+				continue;
+			}
+			if (afc::download(i.url, (afc::program_dir_path() / "Cache" / (i.filename + ".tmp")).string()))
+			{
+				std::filesystem::rename(afc::program_dir_path() / "Cache" / (i.filename + ".tmp"), afc::program_dir_path() / "Cache" / i.filename);
+				flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
+			}
 		}
-		if (afc::download(i.url, (afc::program_dir_path() / "Cache" / (i.filename + ".tmp")).string()))
-		{
-			std::filesystem::rename(afc::program_dir_path() / "Cache" / (i.filename + ".tmp"), afc::program_dir_path() / "Cache" / i.filename);
-			flist.push_back((afc::program_dir_path() / "Cache" / i.filename).string());
-		}
+		Manager.PreUpdate(flist);
 	}
-	Manager.PreUpdate(flist);
 	ThreadRunning = false;
 }
 
 void UninstallGame()
 {
 	ThreadRunning = true;
-	Manager.Uninstall();
+	if (Manager.StatInstalled())
+		Manager.Uninstall();
 	ThreadRunning = false;
 }
