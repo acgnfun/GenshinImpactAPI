@@ -417,8 +417,11 @@ bool GIAPI::Manager::StatLatest(bool PreVer) const
 {
 	if (!LocalMetadataStat || !ResourceIndexStat) return false;
 	try {
-		if (PreVer) if (LocalMetadata["game"]["version"] == ResourceIndex["data"]["pre_download_game"]["latest"]["version"])
-			return true;
+		if (PreVer)
+		{
+			if (LocalMetadata["game"]["version"] == ResourceIndex["data"]["pre_download_game"]["latest"]["version"])
+				return true;
+		}
 		else
 		{
 			bool bLatest = false, bPreLatest = false;
@@ -428,7 +431,7 @@ bool GIAPI::Manager::StatLatest(bool PreVer) const
 			}
 			catch (...) {}
 			bPreLatest = StatLatest(true);
-			return bLatest || bPreLatest;
+			return (bLatest || bPreLatest);
 		}
 	}
 	catch (...) {}
@@ -441,6 +444,15 @@ bool GIAPI::Manager::StatPreDownload() const
 	try { if (ResourceIndex["data"]["pre_download_game"] != nullptr) return true; }
 	catch (...) {}
 	return false;
+}
+
+GIAPI::ErrorCode GIAPI::Manager::GetInstallPath(string& ReturnPath)
+{
+	if (!LocalMetadataStat) return LocalMetadataNotLoaded;
+	if (!StatInstalled()) return NotInstalled;
+	try { ReturnPath = std::string(LocalMetadata["game"]["path"]); }
+	catch (...) { return UnknownError; }
+	return Success;
 }
 
 GIAPI::ErrorCode GIAPI::Manager::Install(strlist FileList, string Path, Server ServerId, int LanguageId)

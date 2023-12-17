@@ -95,6 +95,7 @@ namespace GIAPI
 		bool StatInstalled() const;
 		bool StatLatest(bool PreVer = false) const;
 		bool StatPreDownload() const;
+		ErrorCode GetInstallPath(string& ReturnPath);
 		ErrorCode Install(strlist FileList, string Path, Server ServerId, int LanguageId);
 		ErrorCode PreInstall(strlist FileList, string Path, Server ServerId, int LanguageId);
 		ErrorCode Update(strlist FileList);

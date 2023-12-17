@@ -294,9 +294,9 @@ bool run() // proc function.
 		{
 			CoInitialize(nullptr);
 			if (TagPreVer)
-				Man.Install(Packs, InstallPath, ServerId, LanguageId);
-			else
 				Man.PreInstall(Packs, InstallPath, ServerId, LanguageId);
+			else
+				Man.Install(Packs, InstallPath, ServerId, LanguageId);
 			CoUninitialize();
 		}
 		else if (TagUpdate)
