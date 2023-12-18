@@ -24,8 +24,7 @@
 #define IDM_SERVER_OFFICIAL             32789
 #define IDM_SERVER_BILIBILI             32790
 #define IDM_SERVER_GLOBAL               32791
-#define ID_32792                        32792
-#define IDM_INSTPOS                     32793
+#define IDM_INSTPOS                     32792
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -34,7 +33,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        147
-#define _APS_NEXT_COMMAND_VALUE         32798
+#define _APS_NEXT_COMMAND_VALUE         32793
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           109
 #endif
