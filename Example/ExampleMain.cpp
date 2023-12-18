@@ -2,6 +2,7 @@
 #include <iostream>
 #include <afc/OptProc.h>
 #include <afc/Download.h>
+#include <afc/PathProc.h>
 
 static std::vector<std::pair<std::string, std::string>> DownloadPairs;
 static std::string ResourcePath;
@@ -172,6 +173,7 @@ int main(int argc, char* argv[])
 		case 21:
 			TagPreVer = true;
 			break;
+		break;
 		case AFC_OPT_ERROR:
 			if (printerror()) // check input commandline options' error.
 				return 1;

@@ -217,10 +217,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				break;
 			}
 		}
-		if (Manager.StatPreDownload())
-			PreDownloadTag = true;
-		else
-			PreDownloadTag = false;
 		RefreshButton();
 		hr = DXACreateBitmap(WICFactory, Context, (afc::program_dir_path() / L"Assets" / L"Background.png").wstring().c_str(), &pBitmapBuffer);
 		const char* durl = nullptr;
@@ -316,10 +312,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Manager.ResourceIndexUrl(sId, ResourceUrl);
 			if (afc::download(ResourceUrl, (afc::program_dir_path() / "Config" / "Resource.json").string()))
 				Manager.LoadResourceIndex(afc::program_dir_path() / "Config" / "Resource.json");
-			if (Manager.StatPreDownload())
-				PreDownloadTag = true;
-			else
-				PreDownloadTag = false;
 			if (afc::download(URL_CONTENT_OFFICIAL, (afc::program_dir_path() / L"Config" / L"Content.json").string()))
 			{
 				nlohmann::json content;
@@ -353,8 +345,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					catch (...) {}
 				}
 			}
-			InvalidateRect(hWnd, nullptr, false);
-			UpdateWindow(hWnd);
+			RefreshButtonDisplay();
 		}
 		break;
 		case IDM_SERVER_BILIBILI:
@@ -364,10 +355,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Manager.ResourceIndexUrl(sId, ResourceUrl);
 			if (afc::download(ResourceUrl, (afc::program_dir_path() / "Config" / "Resource.json").string()))
 				Manager.LoadResourceIndex(afc::program_dir_path() / "Config" / "Resource.json");
-			if (Manager.StatPreDownload())
-				PreDownloadTag = true;
-			else
-				PreDownloadTag = false;
 			if (afc::download(URL_CONTENT_BILIBILI, (afc::program_dir_path() / L"Config" / L"Content.json").string()))
 			{
 				nlohmann::json content;
@@ -401,8 +388,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					catch (...) {}
 				}
 			}
-			InvalidateRect(hWnd, nullptr, false);
-			UpdateWindow(hWnd);
+			RefreshButtonDisplay();
 		}
 		break;
 		case IDM_SERVER_GLOBAL:
@@ -412,10 +398,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Manager.ResourceIndexUrl(sId, ResourceUrl);
 			if (afc::download(ResourceUrl, (afc::program_dir_path() / "Config" / "Resource.json").string()))
 				Manager.LoadResourceIndex(afc::program_dir_path() / "Config" / "Resource.json");
-			if (Manager.StatPreDownload())
-				PreDownloadTag = true;
-			else
-				PreDownloadTag = false;
 			if (afc::download(URL_CONTENT_GLOBAL, (afc::program_dir_path() / L"Config" / L"Content.json").string()))
 			{
 				nlohmann::json content;
@@ -449,8 +431,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					catch (...) {}
 				}
 			}
-			InvalidateRect(hWnd, nullptr, false);
-			UpdateWindow(hWnd);
+			RefreshButtonDisplay();
 		}
 		break;
 		default:
@@ -719,6 +700,10 @@ void RefreshButton()
 	}
 	if (pBtnMain) pBtnMain->Release();
 	DXACreateBitmap(WICFactory, Context, hInst, MAKEINTRESOURCEW(nBtnId), L"PNG", &pBtnMain);
+	if (Manager.StatPreDownload() && !Manager.StatLatest())
+		PreDownloadTag = true;
+	else
+		PreDownloadTag = false;
 }
 
 void RefreshButtonDisplay()

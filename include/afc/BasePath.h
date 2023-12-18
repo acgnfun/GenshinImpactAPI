@@ -81,6 +81,26 @@ extern "C" {
 	*/
 	AF_EXPORT int AFC_TempPathW(wchar_t* Buffer, int BufSize);
 
+	/**
+	* @brief Rename the path from old name to new.
+	* @param Old_p Old path name.
+	* @param New_p New path name.
+	* @author acgnfun
+	* @date 2023/12/18
+	* @return int(bool)
+	*/
+	AF_EXPORT int AFC_RenamePathA(const char* Old_p, const char* New_p);
+
+	/**
+	* @brief Rename the path from old name to new.
+	* @param Old_p Old path name.
+	* @param New_p New path name.
+	* @author acgnfun
+	* @date 2023/12/18
+	* @return int(bool)
+	*/
+	AF_EXPORT int AFC_RenamePathW(const wchar_t* Old_p, const wchar_t* New_p);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

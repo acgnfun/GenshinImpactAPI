@@ -5,6 +5,7 @@
 #include <bit7z/bit7z.hpp>
 #include <afc/ShortCut.h>
 #include <afc/StringProc.h>
+#include <afc/PathProc.h>
 #include <hpatchz.h>
 #include <fstream>
 
@@ -628,7 +629,7 @@ GIAPI::ErrorCode GIAPI::Manager::Update(strlist FileList)
 			while (i->back() == '\r') i->pop_back();
 			std::filesystem::remove(*i);
 		}
-		std::filesystem::rename(TempPath, Path);
+		afc::rename(TempPath, Path);
 		LocalMetadata["game"]["version"] = ResourceIndex["data"]["game"]["latest"]["version"];
 		FlushMetadata();
 	}
@@ -700,7 +701,7 @@ GIAPI::ErrorCode GIAPI::Manager::PreUpdate(strlist FileList)
 			while (i->back() == '\r') i->pop_back();
 			std::filesystem::remove(*i);
 		}
-		std::filesystem::rename(TempPath, Path);
+		afc::rename(TempPath, Path);
 		LocalMetadata["game"]["version"] = ResourceIndex["data"]["pre_download_game"]["latest"]["version"];
 		FlushMetadata();
 	}
