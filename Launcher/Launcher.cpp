@@ -700,7 +700,7 @@ void RefreshButton()
 	}
 	if (pBtnMain) pBtnMain->Release();
 	DXACreateBitmap(WICFactory, Context, hInst, MAKEINTRESOURCEW(nBtnId), L"PNG", &pBtnMain);
-	if (Manager.StatPreDownload() && !Manager.StatLatest())
+	if (Manager.StatPreDownload() && Manager.StatInstalled() && !Manager.StatLatest())
 		PreDownloadTag = true;
 	else
 		PreDownloadTag = false;
