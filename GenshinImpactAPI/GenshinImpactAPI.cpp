@@ -117,7 +117,7 @@ GIAPI::ErrorCode GIAPI::Manager::LoadLocalMetadata(path MetadataPath)
 	return Success;
 }
 
-GIAPI::ErrorCode GIAPI::Manager::GetLocalGameServer(Server& ReturnServerId) const
+GIAPI::ErrorCode GIAPI::Manager::GetGameServer(Server& ReturnServerId) const
 {
 	if (!LocalMetadataStat) return LocalMetadataNotLoaded;
 	if (!StatInstalled()) return NotInstalled;
@@ -725,6 +725,28 @@ GIAPI::ErrorCode GIAPI::Manager::Uninstall()
 	LocalMetadata["game"]["version"] = std::string();
 	FlushMetadata();
 	return Success;
+}
+
+GIAPI::ErrorCode GIAPI::Manager::MoveGame(string NewPath)
+{
+	if (!StatInstalled()) return NotInstalled;
+	string SrcPath;
+	GetInstallPath(SrcPath);
+	if (SrcPath == NewPath) return InvalidPath;
+	if (std::filesystem::exists(NewPath) &&
+		std::filesystem::is_directory(NewPath) &&
+		!std::filesystem::is_empty(NewPath)) return InvalidPath;
+	if (std::filesystem::exists(NewPath)) std::filesystem::remove_all(NewPath);
+	std::filesystem::create_directories(NewPath);
+	afc::rename(SrcPath, NewPath);
+	LocalMetadata["game"]["path"] = std::filesystem::absolute(NewPath).string();
+	FlushMetadata();
+	return Success;
+}
+
+GIAPI::ErrorCode GIAPI::Manager::MoveServer(Server ServerId)
+{
+	return UnknownError;
 }
 
 GIAPI::ErrorCode GIAPI::Manager::Launch() const

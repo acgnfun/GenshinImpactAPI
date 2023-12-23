@@ -5,6 +5,7 @@
 #define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
+#define IDS_MOVING                      104
 #define IDM_EXIT                        105
 #define IDI_LAUNCHER                    107
 #define IDC_LAUNCHER                    108
@@ -25,6 +26,7 @@
 #define IDM_SERVER_BILIBILI             32790
 #define IDM_SERVER_GLOBAL               32791
 #define IDM_INSTPOS                     32792
+#define IDM_SYNC_TITLE                  32973
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -35,6 +37,6 @@
 #define _APS_NEXT_RESOURCE_VALUE        147
 #define _APS_NEXT_COMMAND_VALUE         32793
 #define _APS_NEXT_CONTROL_VALUE         1001
-#define _APS_NEXT_SYMED_VALUE           109
+#define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

@@ -74,7 +74,8 @@ namespace GIAPI
 		LanguageIdNotSet,
 		NeedReinstall,
 		PredownloadNotSupported,
-		TargetPathNotSupported
+		TargetPathNotSupported,
+		InvalidPath
 	};
 
 	class GIAPI_EXPORT Manager
@@ -87,7 +88,7 @@ namespace GIAPI
 		ErrorCode ResourceIndexUrl(Server ServerId, string& ReturnUrl) const;
 		ErrorCode LoadResourceIndex(path ResourcePath);
 		ErrorCode LoadLocalMetadata(path MetadataPath);
-		ErrorCode GetLocalGameServer(Server& ReturnServerId) const;
+		ErrorCode GetGameServer(Server& ReturnServerId) const;
 		ErrorCode GetInstallPackageUrl(int Language, urllist& ReturnList) const;
 		ErrorCode GetPreInstallPackageUrl(int Language, urllist& ReturnList) const;
 		ErrorCode GetUpdatePackageUrl(urllist& ReturnList) const;
@@ -101,6 +102,8 @@ namespace GIAPI
 		ErrorCode Update(strlist FileList);
 		ErrorCode PreUpdate(strlist FileList);
 		ErrorCode Uninstall();
+		ErrorCode MoveGame(string NewPath);
+		ErrorCode MoveServer(Server ServerId);
 		ErrorCode Launch() const;
 	private:
 		json ResourceIndex;

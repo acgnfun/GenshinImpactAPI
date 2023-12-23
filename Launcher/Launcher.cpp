@@ -18,6 +18,7 @@ HWND hWnd;
 
 bool ThreadRunning = false;
 std::wstring InstallPath;
+bool IgnoreCommand = false;
 
 // 此代码模块中包含的函数的前向声明:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -33,6 +34,8 @@ void PreUpdateGame();
 void UninstallGame();
 void RefreshButton();
 void RefreshButtonDisplay();
+
+void MovePathThread();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -182,6 +185,8 @@ bool PreDownloadTag = false;
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	if (IgnoreCommand)
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	switch (message)
 	{
 	case WM_CREATE:
@@ -204,7 +209,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hr = DXACreateBitmap(WICFactory, Context, hInst, MAKEINTRESOURCEW(IDB_BACKGROUND), L"PNG", &pBackground);
 		hr = DXACreateBitmap(WICFactory, Context, hInst, MAKEINTRESOURCEW(IDB_PREUPDATE), L"PNG", &pBtnPreDownload);
 		Manager.LoadLocalMetadata(afc::program_dir_path() / "Config" / "Metadata.json");
-		if (Manager.GetLocalGameServer(sId) != GIAPI::Success)
+		if (Manager.GetGameServer(sId) != GIAPI::Success)
 			sId = GIAPI::CNREL_OFFICIAL;
 		if (Manager.LoadResourceIndex(afc::program_dir_path() / "Config" / "Resource.json") != GIAPI::Success)
 		{
@@ -276,6 +281,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// 分析菜单选择:
 		switch (wmId)
 		{
+		case IDM_SYNC_TITLE:
+			SetWindowTextW(hWnd, szTitle);
+			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
@@ -303,8 +311,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			Manager.Launch();
 			break;
 		case IDM_INSTPOS:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_INPUT), hWnd, Input);
-			break;
+		{
+			if (DialogBox(hInst, MAKEINTRESOURCE(IDD_INPUT), hWnd, Input) != IDOK) break;
+			WCHAR szMovingPath[MAX_LOADSTRING];
+			LoadStringW(hInst, IDS_MOVING, szMovingPath, MAX_LOADSTRING);
+			SetWindowTextW(hWnd, szMovingPath);
+			std::thread(MovePathThread).detach();
+		}
+		break;
 		case IDM_SERVER_OFFICIAL:
 		{
 			std::string ResourceUrl;
@@ -711,4 +725,13 @@ void RefreshButtonDisplay()
 	RefreshButton();
 	InvalidateRect(hWnd, nullptr, false);
 	UpdateWindow(hWnd);
+}
+
+void MovePathThread()
+{
+	IgnoreCommand = true;
+	Manager.MoveGame(afc::convert_string(InstallPath));
+	IgnoreCommand = false;
+	Sleep(100);
+	PostMessage(Context, WM_COMMAND, IDM_SYNC_TITLE, 0);
 }
