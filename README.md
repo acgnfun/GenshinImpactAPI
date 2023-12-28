@@ -49,4 +49,4 @@
 - [bit7z](https://github.com/rikyoz/bit7z) - Provides an API for manipulating 7z.dll.
 - [HDiffPatch](https://github.com/sisong/HDiffPatch) - Provide updated game features.
 - [AFComponents](https://github.com/acgnfun/AFComponents) - Provides a simple API for creating shortcuts.
-- [aria2](https://github.com/aria2/aria2) - Provides download function.
+- ~~[aria2](https://github.com/aria2/aria2) - Provides download function.~~
