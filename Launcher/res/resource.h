@@ -7,7 +7,10 @@
 #define IDM_ABOUT                       104
 #define IDS_MOVING                      104
 #define IDM_EXIT                        105
+#define IDS_INSTALLING                  105
+#define IDS_UPDATING                    106
 #define IDI_LAUNCHER                    107
+#define IDS_UNINSTALLING                107
 #define IDC_LAUNCHER                    108
 #define IDB_PREUPDATE                   140
 #define IDB_INSTALL                     141

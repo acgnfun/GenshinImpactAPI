@@ -719,12 +719,14 @@ GIAPI::ErrorCode GIAPI::Manager::Uninstall()
 	if (!LocalMetadataStat) return LocalMetadataNotLoaded;
 	if (!StatInstalled()) return NotInstalled;
 	std::filesystem::remove_all(std::string(LocalMetadata["game"]["path"]));
-	LocalMetadata["game"]["entry"] = std::string();
-	LocalMetadata["game"]["path"] = std::string();
-	LocalMetadata["game"]["status"] = false;
-	LocalMetadata["game"]["version"] = std::string();
+	LocalMetadata.parse(DEFAULT_GAMEINFO_JSON_STRING);
 	FlushMetadata();
 	return Success;
+}
+
+GIAPI::ErrorCode GIAPI::Manager::FixGame()
+{
+	return UnknownError;
 }
 
 GIAPI::ErrorCode GIAPI::Manager::MoveGame(string NewPath)

@@ -587,6 +587,9 @@ void InstallGame()
 	ThreadRunning = true;
 	if (!Manager.StatInstalled())
 	{
+		WCHAR szBuffer[MAX_LOADSTRING];
+		LoadStringW(hInst, IDS_INSTALLING, szBuffer, MAX_LOADSTRING);
+		SetWindowTextW(hWnd, szBuffer);
 		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 		GIAPI::urllist list;
 		GIAPI::strlist flist;
@@ -612,6 +615,7 @@ void InstallGame()
 		SetThreadExecutionState(ES_CONTINUOUS);
 		RefreshButtonDisplay();
 		MessageBeep(MB_OK);
+		PostMessage(Context, WM_COMMAND, IDM_SYNC_TITLE, 0);
 	}
 	ThreadRunning = false;
 }
@@ -621,6 +625,9 @@ void UpdateGame()
 	ThreadRunning = true;
 	if (!Manager.StatLatest())
 	{
+		WCHAR szBuffer[MAX_LOADSTRING];
+		LoadStringW(hInst, IDS_UPDATING, szBuffer, MAX_LOADSTRING);
+		SetWindowTextW(hWnd, szBuffer);
 		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 		GIAPI::urllist list;
 		GIAPI::strlist flist;
@@ -644,6 +651,7 @@ void UpdateGame()
 		SetThreadExecutionState(ES_CONTINUOUS);
 		RefreshButtonDisplay();
 		MessageBeep(MB_OK);
+		PostMessage(Context, WM_COMMAND, IDM_SYNC_TITLE, 0);
 	}
 	ThreadRunning = false;
 }
@@ -653,6 +661,9 @@ void PreUpdateGame()
 	ThreadRunning = true;
 	if (Manager.StatPreDownload() && !Manager.StatLatest(true))
 	{
+		WCHAR szBuffer[MAX_LOADSTRING];
+		LoadStringW(hInst, IDS_UPDATING, szBuffer, MAX_LOADSTRING);
+		SetWindowTextW(hWnd, szBuffer);
 		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 		GIAPI::urllist list;
 		GIAPI::strlist flist;
@@ -676,6 +687,7 @@ void PreUpdateGame()
 		SetThreadExecutionState(ES_CONTINUOUS);
 		RefreshButtonDisplay();
 		MessageBeep(MB_OK);
+		PostMessage(Context, WM_COMMAND, IDM_SYNC_TITLE, 0);
 	}
 	ThreadRunning = false;
 }
@@ -685,11 +697,15 @@ void UninstallGame()
 	ThreadRunning = true;
 	if (Manager.StatInstalled())
 	{
+		WCHAR szBuffer[MAX_LOADSTRING];
+		LoadStringW(hInst, IDS_UNINSTALLING, szBuffer, MAX_LOADSTRING);
+		SetWindowTextW(hWnd, szBuffer);
 		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 		Manager.Uninstall();
 		SetThreadExecutionState(ES_CONTINUOUS);
 		RefreshButtonDisplay();
 		MessageBeep(MB_OK);
+		PostMessage(Context, WM_COMMAND, IDM_SYNC_TITLE, 0);
 	}
 	ThreadRunning = false;
 }

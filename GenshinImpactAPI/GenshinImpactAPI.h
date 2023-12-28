@@ -102,6 +102,7 @@ namespace GIAPI
 		ErrorCode Update(strlist FileList);
 		ErrorCode PreUpdate(strlist FileList);
 		ErrorCode Uninstall();
+		ErrorCode FixGame();
 		ErrorCode MoveGame(string NewPath);
 		ErrorCode MoveServer(Server ServerId);
 		ErrorCode Launch() const;
