@@ -86,6 +86,7 @@ namespace GIAPI
 		Manager(const Manager&) = delete;
 		Manager& operator=(const Manager&) = delete;
 		ErrorCode ResourceIndexUrl(Server ServerId, string& ReturnUrl) const;
+		ErrorCode ContentIndexUrl(Server ServerId, string& ReturnUrl) const;
 		ErrorCode LoadResourceIndex(path ResourcePath);
 		ErrorCode LoadLocalMetadata(path MetadataPath);
 		ErrorCode GetGameServer(Server& ReturnServerId) const;
