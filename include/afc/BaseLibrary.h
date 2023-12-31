@@ -11,4 +11,9 @@
 #define AF_EXPORT	__declspec(dllimport)
 #endif // AF_BUILD
 
+#ifdef AF_STATICLIB
+#undef AF_EXPORT
+#define AF_EXPORT
+#endif // AF_STATICLIB
+
 #endif // !BASELIBRARY_H
